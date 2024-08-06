@@ -5,18 +5,23 @@ import (
 	"time"
 
 	"github.com/HackJack14/weather-station/dht"
+	"github.com/HackJack14/weather-station/temperature"
 )
 
 func main() {
 	dht := dht.NewDht20()
-	if dht.Begin() {
+	dsb := temperature.NewDs18b20()
+	if dsb.Begin() && dht.Begin() {
 		for {
+			dsb.Read()
 			dht.Read()
-			log.Print("Humidity: ")
-			log.Println(dht.GetHumidity())
-			log.Print("Temperature: ")
+			log.Println("ds18b20 Temperature:")
+			log.Println(dsb.GetTemperature())
+			log.Println("dht20 Temperature:")
 			log.Println(dht.GetTemperature())
-			time.Sleep(time.Second)
+			log.Println("dht20 Humidity:")
+			log.Println(dht.GetHumidity())
+			time.Sleep(10 * time.Second)
 		}
 	} else {
 		log.Println("failed to initialize")
