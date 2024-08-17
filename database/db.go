@@ -1,19 +1,31 @@
 package db
 
 import (
+    "os"
     "log"
-    "os/exec"
-    // "runtime"
+    "encoding/csv"
 )
 
-func Execute(statement string) {
-    // terminal := "";
-    // if runtime.GOOS == "windows" {
-    //     terminal = "powershell"
-    // } else {
-    //     terminal = "bash"
-    // }
-	cmd := exec.Command("sqlite3", "weatherstation.db", "\"" + statement + "\"", "> result.txt") 
-	log.Println(cmd.String())
-	cmd.Start()
+type Database struct {
+    reader *csv.Reader
+    writer *csv.Writer
+}
+
+func NewDatabase(file *os.File) Database {
+    return Database{
+        csv.NewReader(file),
+        csv.NewWriter(file),
+    }
+}
+
+func (data *Database) SaveEntry(outTemp, inTemp, humidity string) {
+    entry := []string{outTemp, inTemp, humidity}
+    err := data.writer.Write(entry)
+    if err != nil {
+        log.Fatal(err)
+    }
+    data.writer.Flush()
+}
+
+func (data *Database) Close() {
 }
