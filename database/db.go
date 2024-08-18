@@ -24,8 +24,9 @@ func (data *Database) SaveEntry(outTemp, inTemp, humidity string) {
     if err != nil {
         log.Fatal(err)
     }
-    data.writer.Flush()
+    log.Println(entry)
 }
 
 func (data *Database) Close() {
+    data.writer.Flush()
 }

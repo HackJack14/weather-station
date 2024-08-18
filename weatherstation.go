@@ -17,11 +17,11 @@ func main() {
         log.Fatal(err)
     }
     defer file.Close()
-    data := db.NewDatabase(file)
     dht := dht.NewDht20()
     dsb := temperature.NewDs18b20()
     if dsb.Begin() && dht.Begin() {
     	for {
+    		data := db.NewDatabase(file)
     		dsb.Read()
     		dht.Read()
     		log.Println("ds18b20 Temperature:")
@@ -34,7 +34,8 @@ func main() {
     		dht20Humid := dht.GetHumidity()
     		log.Println(dht20Humid)
     		data.SaveEntry(fmt.Sprintf("%d", dsbTemp), fmt.Sprintf("%d", dht20Temp), fmt.Sprintf("%d", dht20Humid))
-    		time.Sleep(time.Minute)
+		data.Close()
+    		time.Sleep(time.Second * 10)
     	}
     } else {
     	log.Println("failed to initialize")
