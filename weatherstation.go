@@ -1,10 +1,8 @@
 package main
 
 import (
-    "fmt"
     "log"
     "time"
-    "os"
 
     "github.com/HackJack14/weather-station/dht"
     "github.com/HackJack14/weather-station/temperature"
@@ -12,16 +10,11 @@ import (
 )
 
 func main() {
-    file, err := os.OpenFile("data.csv", os.O_RDWR | os.O_APPEND, 0666)
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer file.Close()
+    data := db.NewDatabase()
     dht := dht.NewDht20()
     dsb := temperature.NewDs18b20()
     if dsb.Begin() && dht.Begin() {
     	for {
-    		data := db.NewDatabase(file)
     		dsb.Read()
     		dht.Read()
     		log.Println("ds18b20 Temperature:")
@@ -33,8 +26,7 @@ func main() {
     		log.Println("dht20 Humidity:")
     		dht20Humid := dht.GetHumidity()
     		log.Println(dht20Humid)
-    		data.SaveEntry(fmt.Sprintf("%d", dsbTemp), fmt.Sprintf("%d", dht20Temp), fmt.Sprintf("%d", dht20Humid))
-		data.Close()
+    		data.SaveEntry(dht20Temp, dsbTemp, dht20Humid);
     		time.Sleep(time.Second * 10)
     	}
     } else {

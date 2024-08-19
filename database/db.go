@@ -1,32 +1,34 @@
 package db
 
 import (
-    "os"
+    "time"
     "log"
-    "encoding/csv"
+    "database/sql"
+    _ "github.com/mattn/go-sqlite3"
 )
 
+const dbname string = "weatherstation.db"
+
 type Database struct {
-    reader *csv.Reader
-    writer *csv.Writer
+    db *sql.DB
 }
 
-func NewDatabase(file *os.File) Database {
-    return Database{
-        csv.NewReader(file),
-        csv.NewWriter(file),
-    }
-}
-
-func (data *Database) SaveEntry(outTemp, inTemp, humidity string) {
-    entry := []string{outTemp, inTemp, humidity}
-    err := data.writer.Write(entry)
+func NewDatabase() *Database {
+    db, err := sql.Open("sqlite3", dbname)
     if err != nil {
         log.Fatal(err)
     }
-    log.Println(entry)
+    return &Database{
+        db,
+    }
 }
 
-func (data *Database) Close() {
-    data.writer.Flush()
+func (data *Database) SaveEntry(outTemp, inTemp, humidity float64) {
+    const statement string = `INSERT INTO weatherdata
+        VALUES (?, ?, ?, ?);`
+
+    _, err := data.db.Exec(statement, outTemp, inTemp, humidity, time.Now().Unix())
+    if err != nil {
+        log.Fatal(err)
+    }
 }
