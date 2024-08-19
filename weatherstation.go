@@ -27,7 +27,7 @@ func main() {
     		dht20Humid := dht.GetHumidity()
     		log.Println(dht20Humid)
     		data.SaveEntry(dht20Temp, dsbTemp, dht20Humid);
-    		time.Sleep(time.Second * 10)
+    		time.Sleep(time.Minute)
     	}
     } else {
     	log.Println("failed to initialize")
