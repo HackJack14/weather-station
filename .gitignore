@@ -1,4 +1,5 @@
 *.exe
 *.db
 weatherstation
+weather-station
 *.csv
