@@ -9,6 +9,13 @@ import (
 
 const dbname string = "weatherstation.db"
 
+type WeatherEntry struct {
+    TempOutside float64
+    TempInside float64
+    Humidity float64
+    TimeUnix int
+}
+
 type Database struct {
     db *sql.DB
 }
@@ -31,4 +38,17 @@ func (data *Database) SaveEntry(outTemp, inTemp, humidity float64) {
     if err != nil {
         log.Fatal(err)
     }
+}
+
+func (data *Database) LoadLatestEntry() WeatherEntry {
+    const statement string = `SELECT TempOutside, TempInside, Humidity, MAX(TimeUnix)
+        FROM weatherdata`
+        
+    row := data.db.QueryRow(statement)
+    var entry WeatherEntry
+    err := row.Scan(&entry.TempOutside, &entry.TempInside, &entry.Humidity, &entry.TimeUnix)
+    if err != nil {
+        log.Fatal(err)
+    }
+    return entry
 }
