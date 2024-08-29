@@ -1,12 +1,12 @@
 package main
 
 import (
-    // "log"
-    // "time"
+    "log"
+    "time"
 
-    // "github.com/HackJack14/weather-station/dht"
-    // "github.com/HackJack14/weather-station/temperature"
-    // "github.com/HackJack14/weather-station/database"
+    "github.com/HackJack14/weather-station/dht"
+    "github.com/HackJack14/weather-station/temperature"
+    "github.com/HackJack14/weather-station/database"
     "github.com/HackJack14/weather-station/server"
 )
 
